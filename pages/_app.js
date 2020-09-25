@@ -1,7 +1,39 @@
-import '../styles/globals.css'
+import { ThemeProvider, CSSReset } from '@chakra-ui/core';
+import { AuthProvider } from '@/lib/auth';
+import customTheme from '@/styles/theme';
+import { Global, css } from '@emotion/core';
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
-}
+const GlobalStyle = ({ children }) => {
+  return (
+    <>
+      <CSSReset />
+      <Global
+        styles={css`
+          html {
+            min-width: 360px;
+            scroll-behavior: smooth;
+          }
+          #__next {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+          }
+        `}
+      />
+      {children}
+    </>
+  );
+};
 
-export default MyApp
+const MyApp = ({ Component, pageProps }) => {
+  return (
+    <ThemeProvider theme={customTheme}>
+      <GlobalStyle />
+      <AuthProvider>
+        <Component {...pageProps} />
+      </AuthProvider>
+    </ThemeProvider>
+  );
+};
+
+export default MyApp;
