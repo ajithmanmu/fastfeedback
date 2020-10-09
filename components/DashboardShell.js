@@ -1,70 +1,66 @@
 import React from 'react';
 import {
-  Flex,
-  Icon,
-  Link,
-  Stack,
-  Avatar,
+  Box,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-  Heading
+  Heading,
+  Button,
+  Flex,
+  Link,
+  Avatar,
+  Icon
 } from '@chakra-ui/core';
+
 import { useAuth } from '@/lib/auth';
+import AddSiteModal from './AddSiteModal';
 
 const DashboardShell = ({ children }) => {
-  const auth = useAuth();
-return (
-  <Flex flexDirection="column">
-    <Flex
-      backgroundColor="whiteAlpha.500"
-      justifyContent="space-between"
-      alignItems="center"
-      pt={4}
-      pb={4}
-      color="gray.500"
-      pl={4}
-      pr={4}
-    >
-      <Stack isInline spacing={4} isReversed>
-        <Link>Sites</Link>
-        <Link>Feedback</Link>
-        <Icon name="logo" color="black" />
-      </Stack>
-      <Flex alignItems="center">
-        <Link mr={4}>Account</Link>
-        <Avatar size="sm" src={auth?.user?.photoUrl} />
+  const { user, signout } = useAuth();
+
+  return (
+    <Box backgroundColor="gray.100" h="100vh">
+      <Flex backgroundColor="white" mb={16} w="full">
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          pt={4}
+          pb={4}
+          maxW="1250px"
+          margin="0 auto"
+          w="full"
+          px={8}
+          h="70px"
+        >
+          <Flex>
+            <Icon name="logo" size="24px" mr={8} />
+            <Link mr={4}>Sites</Link>
+            <Link>Feedback</Link>
+          </Flex>
+          <Flex justifyContent="center" alignItems="center">
+            {user && (
+              <Button variant="ghost" mr={2} onClick={() => signout()}>
+                Log Out
+              </Button>
+            )}
+            <Avatar size="sm" src={user?.photoUrl} />
+          </Flex>
+        </Flex>
       </Flex>
-    </Flex>
-    <Flex
-      flexDirection="column"
-      backgroundColor="lightcyan"
-      color="whiteAlpha.500"
-    >
-      <Flex
-        // justifyContent="center"
-        // alignItems="center"
-        // pl="auto"
-        // pr="auto"
-        pt={10}
-        pb={10}
-        direction="column"
-        ml="auto"
-        mr="auto"
-        maxWidth="800px"
-        w="100%"
-      >
+      <Flex margin="0 auto" direction="column" maxW="1250px" px={8}>
         <Breadcrumb>
           <BreadcrumbItem>
-            <BreadcrumbLink color="black">Sites</BreadcrumbLink>
+            <BreadcrumbLink>Sites</BreadcrumbLink>
           </BreadcrumbItem>
         </Breadcrumb>
-        <Heading color="black">Sites</Heading>
+        <Flex justifyContent="space-between">
+          <Heading mb={8}>My Sites</Heading>
+          <AddSiteModal>+ Add Site</AddSiteModal>
+        </Flex>
         {children}
       </Flex>
-    </Flex>
-  </Flex>
-)
-}
+    </Box>
+  );
+};
 
 export default DashboardShell;

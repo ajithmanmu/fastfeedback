@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { mutate } from 'swr';
 import {
   Modal,
   ModalOverlay,
@@ -12,18 +13,42 @@ import {
   FormLabel,
   Button,
   Input,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from '@chakra-ui/core';
 
 import { createSite } from '@/lib/db';
+import { useAuth } from '@/lib/auth';
 
 const AddSiteModal = () => {
+  const auth = useAuth();
+  const toast = useToast();
   const initialRef = useRef();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { handleSubmit, register } = useForm();
 
-  const onCreateSite = (values) => {
-    createSite(values);
+  const onCreateSite = ({ name, url }) => {
+    const newSite = {
+      authorId: auth?.user?.uid,
+      createdAt: new Date().toISOString(),
+      name,
+      url
+    };
+    createSite(newSite);
+    toast({
+      title: 'Success!',
+      description: "We've added your site.",
+      status: 'success',
+      duration: 9000,
+      isClosable: true
+    });
+    mutate(
+      '/api/sites',
+      async (data) => {
+        return { sites: [...data.sites, newSite] };
+      },
+      false
+    );
     onClose();
   };
 
@@ -48,7 +73,7 @@ const AddSiteModal = () => {
               <Input
                 ref={initialRef}
                 placeholder="My site"
-                name="site"
+                name="name"
                 ref={register({
                   required: 'Required'
                 })}
