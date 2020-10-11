@@ -43,8 +43,9 @@ const AddSiteModal = () => {
       isClosable: true
     });
     mutate(
-      '/api/sites',
+      ['/api/sites', auth.user.token],
       async (data) => {
+        console.log('data in ADS', data);
         return { sites: [...data.sites, newSite] };
       },
       false
